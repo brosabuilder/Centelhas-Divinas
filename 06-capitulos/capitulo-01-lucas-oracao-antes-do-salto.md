@@ -131,7 +131,7 @@ Lucas olhou para trás, para a fila de doze visores vermelhos esperando.
 
 — Nos vemos no chão, cavalheiros.
 
-Viu Graves revirar os olhos. Viu Miller endireitar a coluna. Viu onze homens que não eram amigos e não eram família e não eram nada além de corpos treinados dentro de um avião tremendo — mas que, por um segundo, estavam juntos. E isso bastava.
+Viu Graves revirar os olhos. Viu Miller endireitar a coluna. Viu onze rostos que ele conhecia melhor do que a maioria das pessoas conhecia a própria família — cicatrizes, tiques, o jeito que cada um segurava a arma quando a coisa apertava. Homens com quem tinha dividido trincheiras, rações frias e os piores dias das suas vidas. E Miller, o garoto novo, de pé entre eles como se já pertencesse. Quase pertencia.
 
 A rampa traseira estalou.
 
@@ -155,7 +155,7 @@ Lucas levantou o punho cerrado. *Firme.*
 
 Miller levantou o dele. Tremia. Mas levantou.
 
-Graves, mais atrás na fila, bateu duas vezes no capacete de Miller. *Vai dar certo, moleque.* Ou *eu te mato se você vomitar no meu paraquedas.* Com Graves, significava a mesma coisa.
+Graves, mais atrás na fila, bateu duas vezes no capacete de Miller. *Vai dar certo, moleque.* Ou *se você não pular, eu te empurro.* Com Graves, carinho e ameaça vinham no mesmo pacote.
 
 — *Trinta segundos!*
 
