@@ -49,3 +49,4 @@ Estrutura para organizar todo o material de worldbuilding antes de escrever os c
 ### Capítulos escritos
 - [[06-capitulos/capitulo-01-lucas-oracao-antes-do-salto|Cap. 1 — Lucas: A Oração Antes do Salto]] ✓
 - [[06-capitulos/capitulo-02-lucas-sob-a-selva|Cap. 2 — Lucas: Sob a Selva]] ✓
+- [[06-capitulos/capitulo-03-lucas-a-caverna|Cap. 3 — Lucas: A Caverna]] ✓
