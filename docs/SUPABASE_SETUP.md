@@ -11,8 +11,8 @@ Sem o Supabase configurado, o site funciona em modo aberto: todos os capítulos 
 ## 2. Executar o schema
 
 1. No painel do Supabase, vá em **SQL Editor**.
-2. Copie o conteúdo de `supabase/schema.sql`.
-3. Execute o script.
+2. Para o **app React** (lovable-site), execute `supabase/migration-lovable.sql` — cria tabelas `chapter_views`, `chapter_ratings` e `chapter_comments` com `session_id` (sem auth).
+3. Se já tiver rodado `schema.sql` com auth e os ratings não funcionarem, execute a migração — ela recria as tabelas.
 
 ## 3. Habilitar Magic Link (OTP)
 
