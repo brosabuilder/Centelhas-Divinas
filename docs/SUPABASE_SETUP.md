@@ -1,52 +1,55 @@
-# Configuração do Supabase (Centelhas Divinas)
+# Supabase — Centelhas Divinas (lovable-site)
 
-Sem o Supabase configurado, o site funciona em modo aberto: todos os capítulos são acessíveis e as seções de Rating e Comments ficam desabilitadas.
+**Projeto:** `qiwphwptypshrlhxqqzu` (Centelhas Divinas)
 
-## 1. Criar projeto
+## 1. Variáveis de ambiente
 
-1. Acesse [supabase.com](https://supabase.com) e crie uma conta (gratuita).
-2. Crie um novo projeto.
-3. Anote a **Project URL** e a **anon public** key em Settings > API.
+### Local (`lovable-site/.env.local`)
 
-## 2. Executar o schema
+```bash
+cp lovable-site/.env.example lovable-site/.env.local
+```
 
-1. No painel do Supabase, vá em **SQL Editor**.
-2. Para o **app React** (lovable-site), execute `supabase/migration-lovable.sql` — cria tabelas `chapter_views`, `chapter_ratings` e `chapter_comments` com `session_id` (sem auth).
-3. Se já tiver rodado `schema.sql` com auth e os ratings não funcionarem, execute a migração — ela recria as tabelas.
+Preencha com as credenciais do seu projeto em [supabase.com](https://supabase.com) → Settings → API:
 
-## 3. Habilitar Magic Link (OTP)
+```
+VITE_SUPABASE_URL=https://qiwphwptypshrlhxqqzu.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...sua-chave-anon
+```
 
-1. Em **Authentication** > **Providers**, confira que **Email** está habilitado.
-2. Em **Authentication** > **URL Configuration**, adicione a URL do seu site em **Redirect URLs** (ex: `https://seudominio.com`, `https://seudominio.com/**` para permitir todas as rotas).
+O Lovable pode usar `VITE_SUPABASE_PUBLISHABLE_KEY` — ambos funcionam (são a mesma chave).
 
-## 4. Configurar o site
+### Deploy (Lovable / Vercel / Netlify)
 
-1. Copie `config.example.js` para `config.js`:
-   ```bash
-   cp config.example.js config.js
-   ```
-2. Edite `config.js` e preencha:
-   - `CENTELHAS_SUPABASE_URL`: a Project URL do seu projeto
-   - `CENTELHAS_SUPABASE_ANON_KEY`: a chave anon public
+Configure no painel do host:
 
-O arquivo `config.js` não é commitado (está no `.gitignore`).
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY` (ou `VITE_SUPABASE_PUBLISHABLE_KEY`)
 
-## 5. Deploy (GitHub Pages, Netlify, Vercel, etc.)
+## 2. Migrations
 
-O `config.js` não vai para o repositório. Em deploys estáticos, é preciso gerá-lo no build:
+Execute no **SQL Editor** do Supabase (projeto qiwphwptypshrlhxqqzu):
 
-### Netlify
-1. Em **Site settings** > **Environment variables**, adicione:
-   - `CENTELHAS_SUPABASE_URL` = sua Project URL
-   - `CENTELHAS_SUPABASE_ANON_KEY` = sua anon key
-2. Em **Build settings**:
-   - Build command: `node build-config.js`
-   - Publish directory: `.`
+1. **`supabase/migration-auth.sql`** — tabelas com auth (user_id em ratings e comentários)
 
-### Vercel
-1. Em **Settings** > **Environment Variables**, adicione as mesmas variáveis.
-2. Build command: `node build-config.js`
-3. Output directory: `.` (ou raiz)
+Tabelas: `chapter_views`, `chapter_ratings`, `chapter_comments`. A tabela `subscribers` (antigo email gate) não é usada pelo fluxo atual.
 
-### Outros hosts
-Execute antes do deploy: `CENTELHAS_SUPABASE_URL=... CENTELHAS_SUPABASE_ANON_KEY=... node build-config.js` — isso gera o `config.js` que será publicado.
+## 3. Auth
+
+1. **Authentication** → **Providers** → **Email** → Enable  
+2. (Opcional) Desative **Confirm email** para login imediato sem verificação  
+3. **URL Configuration** → Redirect URLs: adicione a URL do deploy (ex: `https://seu-app.lovable.app`)
+
+## 4. CLI
+
+```bash
+supabase link --project-ref qiwphwptypshrlhxqqzu
+supabase projects api-keys --project-ref qiwphwptypshrlhxqqzu
+supabase inspect db table-stats --linked
+```
+
+## 5. Fluxo atual
+
+- **Login:** Supabase Auth (email + senha) → `auth.users`
+- **Ratings/Comentários:** `user_id` referenciando `auth.users`
+- **Subscribers:** tabela legada, não utilizada pelo app
