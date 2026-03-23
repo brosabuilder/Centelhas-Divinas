@@ -2,3 +2,10 @@
 .obsidian/
 .cursor/
 config.js
+
+# Node / build
+node_modules
+dist
+.env
+.env.local
+.env*.local

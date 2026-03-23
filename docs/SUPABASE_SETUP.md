@@ -1,13 +1,13 @@
-# Supabase — Centelhas Divinas (lovable-site)
+# Supabase — Centelhas Divinas
 
 **Projeto:** `qiwphwptypshrlhxqqzu` (Centelhas Divinas)
 
 ## 1. Variáveis de ambiente
 
-### Local (`lovable-site/.env.local`)
+### Local (`.env.local` na raiz)
 
 ```bash
-cp lovable-site/.env.example lovable-site/.env.local
+cp .env.example .env.local
 ```
 
 Preencha com as credenciais do seu projeto em [supabase.com](https://supabase.com) → Settings → API:
@@ -17,39 +17,55 @@ VITE_SUPABASE_URL=https://qiwphwptypshrlhxqqzu.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...sua-chave-anon
 ```
 
-O Lovable pode usar `VITE_SUPABASE_PUBLISHABLE_KEY` — ambos funcionam (são a mesma chave).
+### Deploy externo (Netlify, Vercel)
 
-### Deploy (Lovable / Vercel / Netlify)
+Configure no painel do host: `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`
 
-Configure no painel do host:
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY` (ou `VITE_SUPABASE_PUBLISHABLE_KEY`)
-
-## 2. Migrations
+## 2. Migration
 
 Execute no **SQL Editor** do Supabase (projeto qiwphwptypshrlhxqqzu):
 
-1. **`supabase/migration-auth.sql`** — tabelas com auth (user_id em ratings e comentários)
+**`supabase/migration-simplified.sql`** — mantém apenas a tabela `subscribers` para captura de e-mail. Remove `chapter_views`, `chapter_ratings`, `chapter_comments`.
 
-Tabelas: `chapter_views`, `chapter_ratings`, `chapter_comments`. A tabela `subscribers` (antigo email gate) não é usada pelo fluxo atual.
+Se o projeto ainda não tem a tabela `subscribers`, execute primeiro o bloco de criação:
 
-## 3. Auth
+```sql
+CREATE TABLE IF NOT EXISTS subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL UNIQUE,
+  name TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
 
-1. **Authentication** → **Providers** → **Email** → Enable  
-2. (Opcional) Desative **Confirm email** para login imediato sem verificação  
-3. **URL Configuration** → Redirect URLs: adicione a URL do deploy (ex: `https://seu-app.lovable.app`)
+Depois execute o restante de `migration-simplified.sql` (RLS).
 
-## 4. CLI
+**`supabase/migration-subscribers-rls.sql`** — remove SELECT público de `subscribers`. Anon não pode mais listar e-mails. O formulário continua gravando via INSERT.
+
+## 3. Fluxo atual
+
+- **Conteúdo:** Markdown em `content/pt/` — capítulos publicados semanalmente
+- **E-mail:** formulário no site grava em `subscribers` (nome + e-mail)
+- **Newsletter:** ao dar push em `content/pt/*.md`, a GitHub Action envia e-mail via Resend (domínio `onboarding@resend.dev`) para todos os assinantes
+
+## 4. GitHub Actions — Newsletter automático
+
+Para o envio automático, configure em **Settings → Secrets and variables → Actions** do repositório:
+
+| Secret | Descrição |
+|--------|-----------|
+| `SUPABASE_URL` | URL do projeto (ex: `https://xxx.supabase.co`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (Supabase → Settings → API). Nunca exponha no frontend. |
+| `RESEND_API_KEY` | API key do [resend.com](https://resend.com) |
+| `SITE_URL` | URL do site em produção (ex: `https://cosmicsparks.lovable.app`) |
+
+A Action dispara em `push` para `main` quando há alteração em `content/pt/**/*.md`.
+
+**Teste local:** `SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... RESEND_API_KEY=... SITE_URL=... npm run notify-chapter`
+
+## 5. CLI (opcional)
 
 ```bash
 supabase link --project-ref qiwphwptypshrlhxqqzu
 supabase projects api-keys --project-ref qiwphwptypshrlhxqqzu
-supabase inspect db table-stats --linked
 ```
-
-## 5. Fluxo atual
-
-- **Login:** Supabase Auth (email + senha) → `auth.users`
-- **Ratings/Comentários:** `user_id` referenciando `auth.users`
-- **Subscribers:** tabela legada, não utilizada pelo app
